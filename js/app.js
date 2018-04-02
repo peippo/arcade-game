@@ -1,6 +1,5 @@
 const tileWidth = 101;
 const tileHeight = 83;
-const canvasHeight = tileHeight * 6;
 
 // Enemies our player must avoid
 var Enemy = function() {
@@ -10,8 +9,10 @@ var Enemy = function() {
 	// The image/sprite for our enemies, this uses
 	// a helper we've provided to easily load images
 	this.sprite = 'images/enemy-bug.png';
-	this.x = tileWidth * 3;
-	this.y = tileHeight * 2;
+	this.speedMultiplier = Math.random() * (4 - 1) + 1;
+	this.xStartPositions = [-101, -202, -303];
+	this.yStartPositions = [51, 134, 217, 300, 383];
+	this.randomizeStartingPosition();
 };
 
 // Update the enemy's position, required method for game
@@ -20,7 +21,17 @@ Enemy.prototype.update = function(dt) {
 	// You should multiply any movement by the dt parameter
 	// which will ensure the game runs at the same speed for
 	// all computers.
+	this.x += 100 * this.speedMultiplier * dt;
+
+	if (this.x > 505) {
+		this.randomizeStartingPosition();
+	}
 };
+
+Enemy.prototype.randomizeStartingPosition = function() {
+	this.x = this.xStartPositions[Math.floor(Math.random() * (3))];
+	this.y = this.yStartPositions[Math.floor(Math.random() * (5))];
+}
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
@@ -34,7 +45,7 @@ Enemy.prototype.render = function() {
 var Player = function() {
 	this.sprite = 'images/char-boy.png';
 	this.x = tileWidth * 2;
-	this.y = 300;
+	this.y = 460;
 }
 
 Player.prototype.update = function() {
@@ -66,7 +77,14 @@ Player.prototype.handleInput = function(key) {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-let allEnemies = [];
+let enemy1 = new Enemy();
+let enemy2 = new Enemy();
+let enemy3 = new Enemy();
+let enemy4 = new Enemy();
+let enemy5 = new Enemy();
+let enemy6 = new Enemy();
+
+let allEnemies = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6];
 let player = new Player();
 
 
