@@ -88,7 +88,12 @@ var Engine = (function(global) {
     			let playerLeftEdge = player.x - 60;
     			let playerRightEdge = player.x + 35;
     			if (enemy.x > playerLeftEdge && enemy.x < playerRightEdge) {
-    				player.reset();
+    				console.log('splat');
+    				splatter.update();
+    				player.hide();
+    				setTimeout(function() {
+						player.reset();
+					}, 1000);
     			}
     		}
     	});
@@ -162,6 +167,8 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
+        splatter.render();
+
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
@@ -183,10 +190,13 @@ var Engine = (function(global) {
      */
     Resources.load([
         'images/stone-block.png',
-        'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/Heart.png',
+        'images/blood1.png',
+        'images/blood2.png',
+        'images/blood3.png'
     ]);
     Resources.onReady(init);
 
