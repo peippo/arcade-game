@@ -11,7 +11,7 @@ var Enemy = function() {
 	this.sprite = 'images/enemy-bug.png';
 	this.speedMultiplier = Math.random() * (4 - 1) + 1;
 	this.xStartPositions = [-101, -202, -303];
-	this.yStartPositions = [51, 134, 217, 300, 383];
+	this.yStartPositions = [45, 128, 211, 294, 377];
 	this.randomizeStartingPosition();
 };
 
@@ -23,7 +23,7 @@ Enemy.prototype.update = function(dt) {
 	// all computers.
 	this.x += 100 * this.speedMultiplier * dt;
 
-	if (this.x > 505) {
+	if (this.x > 909) {
 		this.randomizeStartingPosition();
 	}
 };
@@ -44,16 +44,21 @@ Enemy.prototype.render = function() {
 
 var Player = function() {
 	this.sprite = 'images/char-boy.png';
-	this.x = tileWidth * 2;
+	this.x = tileWidth * 4;
 	this.y = 460;
 }
 
 Player.prototype.update = function() {
-
+	//console.log(this.y);
 }
 
 Player.prototype.render = function() {
 	ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Player.prototype.reset = function() {
+	this.x = tileWidth * 4;
+	this.y = 460;
 }
 
 Player.prototype.handleInput = function(key) {
@@ -62,7 +67,7 @@ Player.prototype.handleInput = function(key) {
 			this.x -= (this.x > 0) ? tileWidth : 0;
 		break;
 		case 'right':
-			this.x += (this.x < 404) ? tileWidth : 0;
+			this.x += (this.x < 808) ? tileWidth : 0;
 		break;
 		case 'up':
 			this.y -= (this.y > -32) ? tileHeight : 0;

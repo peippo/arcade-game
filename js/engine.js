@@ -24,7 +24,7 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    canvas.width = 505;
+    canvas.width = 909;
     canvas.height = 707;
     doc.body.appendChild(canvas);
 
@@ -79,7 +79,19 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
+    }
+
+    function checkCollisions() {
+    	allEnemies.forEach(function(enemy) {
+    		if (enemy.y === player.y) {
+    			let playerLeftEdge = player.x - 60;
+    			let playerRightEdge = player.x + 35;
+    			if (enemy.x > playerLeftEdge && enemy.x < playerRightEdge) {
+    				player.reset();
+    			}
+    		}
+    	});
     }
 
     /* This is called by the update function and loops through all of the
@@ -107,16 +119,16 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
+                'images/grass-block.png',   // Row 1 of 2 of grass
                 'images/stone-block.png',   // Row 1 of 5 of stone
                 'images/stone-block.png',   // Row 2 of 5 of stone
                 'images/stone-block.png',   // Row 3 of 5 of stone
                 'images/stone-block.png',   // Row 4 of 5 of stone
                 'images/stone-block.png',   // Row 5 of 5 of stone
-                'images/grass-block.png'    // Row 1 of 1 of grass
+                'images/grass-block.png'    // Row 2 of 2 of grass
             ],
             numRows = 7,
-            numCols = 5,
+            numCols = 9,
             row, col;
 
         // Before drawing, clear existing canvas
