@@ -1,3 +1,31 @@
+html {
+  height: 100%; }
+
 body {
-    text-align: center;
-}
+  background-color: #4c5771;
+  background: radial-gradient(#afbad4, #4c5771);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  height: 100%; }
+
+.game-area {
+  margin-top: 50px;
+  position: relative; }
+  @media screen and (max-width: 1024px) {
+    .game-area {
+      transform: scale(0.9); } }
+  @media screen and (max-width: 920px) {
+    .game-area {
+      transform: scale(0.8); } }
+  @media screen and (max-width: 840px) {
+    .game-area {
+      transform: scale(0.7); } }
+
+.game-logo {
+  position: absolute;
+  top: -25px;
+  left: -100px; }
+
+/*# sourceMappingURL=style.css.map */
