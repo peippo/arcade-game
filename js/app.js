@@ -1,6 +1,16 @@
 const tileWidth = 101;
 const tileHeight = 83;
 
+// Sounds from opengameart.org
+const gemSound = new Audio('sounds/Collect_Point_00.mp3');
+const deathSound = new Audio('sounds/Explosion_03.mp3');
+const gameOverSound = new Audio('sounds/Jingle_Lose_00.mp3');
+const gameWinSound = new Audio('sounds/Jingle_Win_00.mp3');
+gemSound.preload = 'auto';
+deathSound.preload = 'auto';
+gameOverSound.preload = 'auto';
+gameWinSound.preload = 'auto';
+
 
 class Enemy {
 	constructor() {
@@ -47,6 +57,7 @@ class Player {
 
 	getGem() {
 		this.gemsCollected += 1;
+		this.playCollectSound();
 
 		// Add new enemy for every 10 gems collected
 		switch (this.gemsCollected) {
@@ -57,22 +68,33 @@ class Player {
 				allEnemies.push(new Enemy());
 			break;
 			case 50:
-				// You win
+				gameWinSound.play();
 			break;
 			default:
 			break;
 		}
 	}
 
+	playCollectSound() {
+		// Clone gem sound to be able to play the sound multiple times in rapid succession
+		let soundClone = gemSound.cloneNode();
+		soundClone.play();
+	}
+
 	hide() {
 		this.x = -200;
 		this.y = -200;
+		deathSound.play();
 	}
 
 	reset() {
-		this.x = tileWidth * 4;
-		this.y = 460;
-		this.lives -= 1;
+		if (this.lives === 0) {
+			gameOverSound.play();
+		} else {
+			this.x = tileWidth * 4;
+			this.y = 460;
+			this.lives -= 1;
+		}
 	}
 
 	handleInput(key) {
