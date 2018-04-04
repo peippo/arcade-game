@@ -1,7 +1,7 @@
 const tileWidth = 101;
 const tileHeight = 83;
 
-// Enemies our player must avoid
+
 class Enemy {
 	constructor() {
 		this.sprite = 'images/enemy-bug.png';
@@ -9,7 +9,7 @@ class Enemy {
 		this.randomizeStartingPosition();
 	}
 
-	// Update the enemy's position, required method for game
+	// Update the enemy's position
 	// Parameter: dt, a time delta between ticks
 	update(dt) {
 		this.x += 100 * this.speedMultiplier * dt;
@@ -26,12 +26,10 @@ class Enemy {
 		this.y = this.yStartPositions[Math.floor(Math.random() * (5))];
 	}
 
-	// Draw the enemy on the screen, required method for game
 	render() {
 		ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 	}
 };
-
 
 
 class Player {
@@ -39,14 +37,31 @@ class Player {
 		this.sprite = 'images/char-boy.png';
 		this.x = tileWidth * 4;
 		this.y = 460;
+		this.lives = 2;
+		this.gemsCollected = 0;
 	}
 
 	render() {
 		ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 	}
 
-	update() {
+	getGem() {
+		this.gemsCollected += 1;
 
+		// Add new enemy for every 10 gems collected
+		switch (this.gemsCollected) {
+			case 10:
+			case 20:
+			case 30:
+			case 40:
+				allEnemies.push(new Enemy());
+			break;
+			case 50:
+				// You win
+			break;
+			default:
+			break;
+		}
 	}
 
 	hide() {
@@ -57,6 +72,7 @@ class Player {
 	reset() {
 		this.x = tileWidth * 4;
 		this.y = 460;
+		this.lives -= 1;
 	}
 
 	handleInput(key) {
@@ -78,6 +94,30 @@ class Player {
 }
 
 
+class Gem {
+	constructor() {
+		this.sprite = 'images/gem-orange.png';
+		this.x = 404;
+		this. y = 211;
+	}
+
+	randomizeSpawnPosition() {
+		this.xSpawnPositions = [101, 202, 303, 404, 505, 606, 707];
+		this.ySpawnPositions = [45, 128, 211, 294, 377];
+		this.x = this.xSpawnPositions[Math.floor(Math.random() * (7))];
+		this.y = this.ySpawnPositions[Math.floor(Math.random() * (5))];
+	}
+
+	randomizeSprite() {
+		this.sprites = ['images/gem-orange.png', 'images/gem-green.png', 'images/gem-blue.png']
+		this.sprite = this.sprites[Math.floor(Math.random() * (3))];
+	}
+
+	render() {
+		ctx.drawImage(Resources.get(this.sprite), this.x + 17, this.y + 50, 66, 113);
+	}
+}
+
 
 class Splatter {
 	constructor() {
@@ -86,27 +126,31 @@ class Splatter {
 		this.y = '-200';
 	}
 
-	update() {
+	drawBlood() {
 		this.sprites = ['images/blood1.png', 'images/blood2.png', 'images/blood3.png']
-		this.sprite = this.sprites[Math.floor(Math.random() * (3))];
+		this.sprite = this.sprites[player.lives];
 		this.x = player.x;
 		this.y = player.y + 90;
 	}
 
 	render() {
-		// TODO fade out image after some time
 		ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 140, 70);
 	}
 }
 
+
 let player = new Player();
-let splatter = new Splatter();
+let gem = new Gem();
+
+let splatters = [];
+for (let i = 0; i < 3; i++) {
+	splatters[i] = new Splatter();
+}
 
 let allEnemies = [];
 for (let i = 0; i < 6; i++) {
 	allEnemies[i] = new Enemy();
 }
-
 
 
 // This listens for key presses and sends the keys to your

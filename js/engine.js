@@ -83,13 +83,13 @@ var Engine = (function(global) {
     }
 
     function checkCollisions() {
+        let playerLeftEdge = player.x - 60;
+        let playerRightEdge = player.x + 35;
+
     	allEnemies.forEach(function(enemy) {
     		if (enemy.y === player.y) {
-    			let playerLeftEdge = player.x - 60;
-    			let playerRightEdge = player.x + 35;
     			if (enemy.x > playerLeftEdge && enemy.x < playerRightEdge) {
-    				console.log('splat');
-    				splatter.update();
+    				splatters[player.lives].drawBlood();
     				player.hide();
     				setTimeout(function() {
 						player.reset();
@@ -97,6 +97,12 @@ var Engine = (function(global) {
     			}
     		}
     	});
+
+        if (gem.x === player.x && gem.y === player.y) {
+            gem.randomizeSprite();
+            gem.randomizeSpawnPosition();
+            player.getGem();
+        }
     }
 
     /* This is called by the update function and loops through all of the
@@ -110,7 +116,6 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        player.update();
     }
 
     /* This function initially draws the "game level", it will then call
@@ -167,7 +172,11 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
-        splatter.render();
+        splatters.forEach(function(splatter) {
+            splatter.render();
+        });
+
+        gem.render();
 
         allEnemies.forEach(function(enemy) {
             enemy.render();
@@ -196,7 +205,10 @@ var Engine = (function(global) {
         'images/Heart.png',
         'images/blood1.png',
         'images/blood2.png',
-        'images/blood3.png'
+        'images/blood3.png',
+        'images/gem-orange.png',
+        'images/gem-green.png',
+        'images/gem-blue.png'
     ]);
     Resources.onReady(init);
 
