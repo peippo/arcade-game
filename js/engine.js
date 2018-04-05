@@ -90,7 +90,7 @@ var Engine = (function(global) {
     	allEnemies.forEach(function(enemy) {
     		if (enemy.y === player.y) {
     			if (enemy.x > playerLeftEdge && enemy.x < playerRightEdge) {
-    				splatters[player.lives].drawBlood();
+    				splatters[player.lives - 1].drawBlood();
     				player.die();
     			}
     		}

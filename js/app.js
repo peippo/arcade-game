@@ -1,5 +1,7 @@
 const tileWidth = 101;
 const tileHeight = 83;
+const heartCountElement = document.querySelector('.game-stats__lives');
+const gemCountElement = document.querySelector('.js-gem-count');
 
 // Sounds from opengameart.org
 const gemSound = new Audio('sounds/Collect_Point_00.mp3');
@@ -51,7 +53,7 @@ class Player {
 		this.x = this.xStartPosition;
 		this.y = this.yStartPosition;
 		this.active = true;
-		this.lives = 2;
+		this.lives = 3;
 		this.gemsCollected = 0;
 	}
 
@@ -61,6 +63,7 @@ class Player {
 
 	getGem() {
 		this.gemsCollected += 1;
+		gemCountElement.innerHTML = (this.gemsCollected < 10) ? `0${this.gemsCollected}/50` : `${this.gemsCollected}/50`;
 		this.playCollectSound();
 
 		// Add new enemy for every 10 gems collected
@@ -93,16 +96,33 @@ class Player {
 
 	die() {
 		deathSound.play();
+		this.lives -= 1;
+		this.updateLifeCounter(this.lives);
 		player.hide();
 
 		if (this.lives === 0) {
+			clearInterval(gameTimer);
 			gameOverSound.play();
 		} else {
-			this.lives -= 1;
 			setTimeout(function() {
 				player.reset();
 			}, 1000);
 		}
+	}
+
+	updateLifeCounter(lives) {
+		switch (lives) {
+			case 2:
+				heartCountElement.innerHTML = '<i class="fa fa-lg fa-heart"></i><i class="fa fa-lg fa-heart"></i><i class="fa fa-lg fa-heart-o"></i>';
+			break;
+			case 1:
+				heartCountElement.innerHTML = '<i class="fa fa-lg fa-heart"></i><i class="fa fa-lg fa-heart-o"></i><i class="fa fa-lg fa-heart-o"></i>';
+			break;
+			case 0:
+				heartCountElement.innerHTML = '<i class="fa fa-lg fa-heart-o"></i><i class="fa fa-lg fa-heart-o"></i><i class="fa fa-lg fa-heart-o"></i>';
+			break;
+		}
+
 	}
 
 	reset() {
@@ -159,7 +179,7 @@ class Splatter {
 
 	drawBlood() {
 		this.sprites = ['images/blood1.png', 'images/blood2.png', 'images/blood3.png']
-		this.sprite = this.sprites[player.lives];
+		this.sprite = this.sprites[(player.lives - 1)];
 		this.x = player.x;
 		this.y = player.y + 90;
 	}
@@ -183,6 +203,28 @@ for (let i = 0; i < 6; i++) {
 	allEnemies[i] = new Enemy();
 }
 
+
+// Timer from stackoverflow, https://stackoverflow.com/questions/5517597/plain-count-up-timer-in-javascript
+const minutesLabel = document.getElementById('minutes');
+const secondsLabel = document.getElementById('seconds');
+let totalSeconds = 0;
+
+function setTime() {
+	++totalSeconds;
+	secondsLabel.innerHTML = pad(totalSeconds % 60);
+	minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
+}
+
+function pad(val) {
+	let valString = val + '';
+	if (valString.length < 2) {
+		return '0' + valString;
+	} else {
+		return valString;
+	}
+}
+
+let gameTimer = setInterval(setTime, 1000);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.

@@ -4,9 +4,22 @@
 	<meta charset="UTF-8">
 	<title>BUG HIGHWAY: Gem Chase</title>
 	<link rel="stylesheet" href="css/style.css">
+	<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 	<div class="game-area">
+		<div class="game-stats">
+			<div class="game-stats__lives">
+				<i class="fa fa-lg fa-heart"></i><i class="fa fa-lg fa-heart"></i><i class="fa fa-lg fa-heart"></i>
+			</div>
+			<div class="game-stats__timer">
+				<i class="fa fa-lg fa-clock-o"></i> <span class="js-timer"><label id="minutes">00</label>:<label id="seconds">00</label></span>
+			</div>
+			<div class="game-stats__gems">
+				<i class="fa fa-lg fa-diamond"></i> <span class="js-gem-count">00/50</span>
+			</div>
+		</div>
 		<img class="game-logo" src="images/bhgc-logo.png" alt="BUG HIGHWAY: Gem Chase">
 	</div>
 

@@ -3,6 +3,7 @@ html {
 }
 
 body {
+	font-family: 'Press Start 2P', cursive;
 	background-color: #4c5771;
 	background: radial-gradient(#afbad4, #4c5771);
 	display: flex;
@@ -33,4 +34,53 @@ body {
 	position: absolute;
 	top: -25px;
 	left: -100px;
+}
+
+.game-stats {
+	position: absolute;
+	right: 0;
+	top: 0;
+	font-size: 20px;
+	width: 50%;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+
+	.fa {
+		line-height: 0;
+	}
+}
+.game-stats__lives,
+.game-stats__timer,
+.game-stats__gems {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.game-stats__timer,
+.game-stats__gems {
+	margin-left: 15px;
+	padding-left: 15px;
+	border-left: 2px solid #4c5771;
+
+	span {
+		margin-left: -10px;
+	}
+}
+
+
+.game-stats__lives {
+	color: #ff7070;
+
+	.fa {
+		margin-right: 5px;
+	}
+}
+
+.game-stats__timer {
+	color: #5edfef;
+}
+
+.game-stats__gems {
+	color: #efbb5c;
 }
