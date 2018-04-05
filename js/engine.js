@@ -84,24 +84,20 @@ var Engine = (function(global) {
     }
 
     function checkCollisions() {
-        let playerLeftEdge = player.x - 60;
-        let playerRightEdge = player.x + 35;
+        let playerLeftEdge = player.x - 70;
+        let playerRightEdge = player.x + 45;
 
     	allEnemies.forEach(function(enemy) {
     		if (enemy.y === player.y) {
     			if (enemy.x > playerLeftEdge && enemy.x < playerRightEdge) {
     				splatters[player.lives].drawBlood();
-    				player.hide();
-    				setTimeout(function() {
-						player.reset();
-					}, 1000);
+    				player.die();
     			}
     		}
     	});
 
         if (gem.x === player.x && gem.y === player.y) {
-            gem.randomizeSprite();
-            gem.randomizeSpawnPosition();
+            gem.randomizeSettings();
             player.getGem();
         }
     }

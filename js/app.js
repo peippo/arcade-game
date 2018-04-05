@@ -15,8 +15,8 @@ gameWinSound.preload = 'auto';
 class Enemy {
 	constructor() {
 		this.sprite = 'images/enemy-bug.png';
-		this.speedMultiplier = Math.random() * (4 - 1) + 1;
-		this.randomizeStartingPosition();
+		this.speedMultiplier = 1;
+		this.randomizeSettings();
 	}
 
 	// Update the enemy's position
@@ -25,11 +25,12 @@ class Enemy {
 		this.x += 100 * this.speedMultiplier * dt;
 
 		if (this.x > 909) {
-			this.randomizeStartingPosition();
+			this.randomizeSettings();
 		}
 	}
 
-	randomizeStartingPosition() {
+	randomizeSettings() {
+		this.speedMultiplier = Math.random() * (4 - 1) + 1;
 		this.xStartPositions = [-101, -202, -303];
 		this.yStartPositions = [45, 128, 211, 294, 377];
 		this.x = this.xStartPositions[Math.floor(Math.random() * (3))];
@@ -45,8 +46,11 @@ class Enemy {
 class Player {
 	constructor() {
 		this.sprite = 'images/char-boy.png';
-		this.x = tileWidth * 4;
-		this.y = 460;
+		this.xStartPosition = 404;
+		this.yStartPosition = 460;
+		this.x = this.xStartPosition;
+		this.y = this.yStartPosition;
+		this.active = true;
 		this.lives = 2;
 		this.gemsCollected = 0;
 	}
@@ -82,19 +86,29 @@ class Player {
 	}
 
 	hide() {
+		this.active = false;
 		this.x = -200;
 		this.y = -200;
-		deathSound.play();
 	}
 
-	reset() {
+	die() {
+		deathSound.play();
+		player.hide();
+
 		if (this.lives === 0) {
 			gameOverSound.play();
 		} else {
-			this.x = tileWidth * 4;
-			this.y = 460;
 			this.lives -= 1;
+			setTimeout(function() {
+				player.reset();
+			}, 1000);
 		}
+	}
+
+	reset() {
+		this.x = this.xStartPosition;
+		this.y = this.yStartPosition;
+		this.active = true;
 	}
 
 	handleInput(key) {
@@ -120,19 +134,16 @@ class Gem {
 	constructor() {
 		this.sprite = 'images/gem-orange.png';
 		this.x = 404;
-		this. y = 211;
+		this.y = 211;
 	}
 
-	randomizeSpawnPosition() {
+	randomizeSettings() {
+		this.sprites = ['images/gem-orange.png', 'images/gem-green.png', 'images/gem-blue.png']
+		this.sprite = this.sprites[Math.floor(Math.random() * (3))];
 		this.xSpawnPositions = [101, 202, 303, 404, 505, 606, 707];
 		this.ySpawnPositions = [45, 128, 211, 294, 377];
 		this.x = this.xSpawnPositions[Math.floor(Math.random() * (7))];
 		this.y = this.ySpawnPositions[Math.floor(Math.random() * (5))];
-	}
-
-	randomizeSprite() {
-		this.sprites = ['images/gem-orange.png', 'images/gem-green.png', 'images/gem-blue.png']
-		this.sprite = this.sprites[Math.floor(Math.random() * (3))];
 	}
 
 	render() {
@@ -144,8 +155,6 @@ class Gem {
 class Splatter {
 	constructor() {
 		this.sprite = 'images/blood1.png';
-		this.x = '-200';
-		this.y = '-200';
 	}
 
 	drawBlood() {
@@ -185,5 +194,7 @@ document.addEventListener('keyup', function(e) {
 		40: 'down'
 	};
 
-	player.handleInput(allowedKeys[e.keyCode]);
+	if (player.active) {
+		player.handleInput(allowedKeys[e.keyCode]);
+	}
 });
