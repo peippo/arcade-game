@@ -9,7 +9,64 @@ body {
   justify-content: center;
   align-items: center;
   margin: 0;
-  height: 100%; }
+  height: 100%;
+  line-height: 1.2; }
+
+.info-modal {
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 1;
+  background-color: rgba(48, 59, 86, 0.9);
+  padding: 40px 60px;
+  width: 420px;
+  border-radius: 100px;
+  text-align: center;
+  top: 48%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  border-bottom: 20px solid #192235;
+  box-shadow: 0 20px 60px -20px black;
+  color: white;
+  transition: all, .75s; }
+
+.info-modal--active {
+  opacity: 1;
+  top: 50%; }
+
+.info-modal__heading {
+  margin: 0 0 .25em; }
+
+.info-modal__score-heading {
+  font-size: 14px;
+  text-transform: uppercase;
+  opacity: .5;
+  margin-bottom: .5em; }
+
+.info-modal__score {
+  font-size: 36px;
+  margin-bottom: .5em; }
+
+.info-modal__button {
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: default;
+  font: inherit;
+  line-height: normal;
+  overflow: visible;
+  padding: 10px 20px;
+  border-radius: 5px;
+  user-select: none;
+  background-color: #5fc148;
+  border-bottom: 8px solid #2f6d21;
+  color: white;
+  transition: all, .3s; }
+  .info-modal__button:hover {
+    cursor: pointer;
+    transform: translateY(2px);
+    background-color: #4aa036; }
 
 .game-area {
   margin-top: 50px;
@@ -41,7 +98,7 @@ body {
   .game-stats .fa {
     line-height: 0; }
 
-.game-stats__lives,
+.game-stats__hearts,
 .game-stats__timer,
 .game-stats__gems {
   padding-top: 5px;
@@ -56,9 +113,9 @@ body {
   .game-stats__gems span {
     margin-left: -10px; }
 
-.game-stats__lives {
+.game-stats__hearts {
   color: #ff7070; }
-  .game-stats__lives .fa {
+  .game-stats__hearts .fa {
     margin-right: 5px; }
 
 .game-stats__timer {

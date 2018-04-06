@@ -1,7 +1,9 @@
 const tileWidth = 101;
 const tileHeight = 83;
-const heartCountElement = document.querySelector('.game-stats__lives');
+const gemGoal = 50;
+const heartCountElement = document.querySelector('.game-stats__hearts');
 const gemCountElement = document.querySelector('.js-gem-count');
+let gameTimer;
 
 // Sounds from opengameart.org
 const gemSound = new Audio('sounds/Collect_Point_00.mp3');
@@ -53,7 +55,7 @@ class Player {
 		this.x = this.xStartPosition;
 		this.y = this.yStartPosition;
 		this.active = true;
-		this.lives = 3;
+		this.hearts = 3;
 		this.gemsCollected = 0;
 	}
 
@@ -63,7 +65,7 @@ class Player {
 
 	getGem() {
 		this.gemsCollected += 1;
-		gemCountElement.innerHTML = (this.gemsCollected < 10) ? `0${this.gemsCollected}/50` : `${this.gemsCollected}/50`;
+		gemCountElement.innerHTML = (this.gemsCollected < 10) ? `0${this.gemsCollected}/${gemGoal}` : `${this.gemsCollected}/${gemGoal}`;
 		this.playCollectSound();
 
 		// Add new enemy for every 10 gems collected
@@ -74,8 +76,8 @@ class Player {
 			case 40:
 				allEnemies.push(new Enemy());
 			break;
-			case 50:
-				gameWinSound.play();
+			case gemGoal:
+				endGame();
 			break;
 			default:
 			break;
@@ -96,13 +98,12 @@ class Player {
 
 	die() {
 		deathSound.play();
-		this.lives -= 1;
-		this.updateLifeCounter(this.lives);
+		this.hearts -= 1;
+		this.updateHeartCounter(this.hearts);
 		player.hide();
 
-		if (this.lives === 0) {
-			clearInterval(gameTimer);
-			gameOverSound.play();
+		if (this.hearts === 0) {
+			endGame();
 		} else {
 			setTimeout(function() {
 				player.reset();
@@ -110,8 +111,8 @@ class Player {
 		}
 	}
 
-	updateLifeCounter(lives) {
-		switch (lives) {
+	updateHeartCounter(hearts) {
+		switch (hearts) {
 			case 2:
 				heartCountElement.innerHTML = '<i class="fa fa-lg fa-heart"></i><i class="fa fa-lg fa-heart"></i><i class="fa fa-lg fa-heart-o"></i>';
 			break;
@@ -179,7 +180,7 @@ class Splatter {
 
 	drawBlood() {
 		this.sprites = ['images/blood1.png', 'images/blood2.png', 'images/blood3.png']
-		this.sprite = this.sprites[(player.lives - 1)];
+		this.sprite = this.sprites[(player.hearts - 1)];
 		this.x = player.x;
 		this.y = player.y + 90;
 	}
@@ -203,6 +204,100 @@ for (let i = 0; i < 6; i++) {
 	allEnemies[i] = new Enemy();
 }
 
+// TODO
+//function startGame() {
+gameTimer = setInterval(setTime, 1000);
+//}
+
+
+function endGame() {
+	let score = 0;
+	let gameWon = false;
+	clearInterval(gameTimer);
+
+	if (player.gemsCollected >= gemGoal) {
+		gameWinSound.play();
+		player.hide();
+		gameWon = true;
+	} else {
+		gameOverSound.play();
+	}
+
+	score = calculateScore(player.gemsCollected, player.hearts, totalSeconds, gameWon);
+	showScoreModal(score);
+}
+
+function calculateScore(gems, hearts, seconds, gameWon) {
+	let gemScore = gems * 100;
+	let heartsScore = 0;
+	let timeScore = 0;
+
+	if (gameWon) {
+		heartsScore = hearts * 2500;
+		timeScore = 15000 - (seconds * 100);
+		timeScore = (timeScore > 0) ? timeScore : 0;
+	}
+
+	return Math.floor(gemScore + heartsScore + timeScore);
+}
+
+function showScoreModal(score) {
+	let message = 'Hey, at least you tried...';
+	if (score >= 300 && score <= 500) {
+		message = 'Everybody has to start somewhere';
+	} else if (score >= 500 && score <= 1000) {
+		message = 'Well that didn\'t go so well';
+	} else if (score >= 1000 && score <= 2000) {
+		message = 'Maybe a little more practice?';
+	} else if (score >= 2000 && score <= 3000) {
+		message = 'I\'m sure you\'ll get the hang of it';
+	} else if (score >= 3000 && score <= 4000) {
+		message = 'That wasn\'t too shabby!';
+	} else if (score >= 4000 && score < 5000) {
+		message = 'So close, give it another try!';
+	} else if (score >= 5000 && score <= 7500) {
+		message = 'You made it! Can you do it faster?';
+	} else if (score >= 7500 && score <= 10000) {
+		message = 'Nice! Now shave off some more seconds';
+	} else if (score >= 10000 && score <= 15000) {
+		message = 'You\'re getting really good at this!';
+	} else if (score >= 15000 && score <= 21500) {
+		message = 'Wow! Not much room for improvement!';
+	} else if (score >= 21500) {
+		message = 'You are a gem chasing god!!';
+	}
+
+	const infoModalMarkup = `
+		<h2 class="info-modal__heading">${message}</h2>
+		<div class="info-modal__result">
+			<h3 class="info-modal__score-heading">Final score</h3>
+			<div class="info-modal__score">${score}</div>
+			<button class="info-modal__button">Play again</button>
+		</div>`
+	let infoModal = document.createElement('div');
+	infoModal.classList.add('info-modal');
+	infoModal.innerHTML = infoModalMarkup;
+	document.body.prepend(infoModal);
+	setTimeout(function() {
+		infoModal.classList.add('info-modal--active');
+	}, 500);
+
+
+	let resetButton = document.querySelector('.info-modal__button');
+	resetButton.addEventListener('click', function() {
+		resetGame();
+	});
+
+	document.addEventListener('keyup', function(e) {
+		if (e.keyCode === 32) {
+			resetGame();
+		}
+	});
+}
+
+function resetGame() {
+	window.location.reload(false);
+}
 
 // Timer from stackoverflow, https://stackoverflow.com/questions/5517597/plain-count-up-timer-in-javascript
 const minutesLabel = document.getElementById('minutes');
@@ -223,8 +318,6 @@ function pad(val) {
 		return valString;
 	}
 }
-
-let gameTimer = setInterval(setTime, 1000);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
