@@ -17,8 +17,16 @@ gameOverSound.preload = 'auto';
 gameWinSound.preload = 'auto';
 
 
-class Enemy {
+class gameObject {
+	render(xOffset = 0, yOffset = 0, spriteWidth = 101, spriteHeight = 171) {
+		ctx.drawImage(Resources.get(this.sprite), (this.x + xOffset), (this.y + yOffset), spriteWidth, spriteHeight);
+	}
+}
+
+
+class Enemy extends gameObject {
 	constructor() {
+		super();
 		this.sprite = 'images/enemy-bug.png';
 		this.speedMultiplier = 1;
 		this.randomizeSettings();
@@ -41,15 +49,12 @@ class Enemy {
 		this.y = yStartPositions[Math.floor(Math.random() * (5))];
 		this.speedMultiplier = Math.random() * (4 - 1) + 1;
 	}
-
-	render() {
-		ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-	}
 }
 
 
-class Player {
+class Player extends gameObject {
 	constructor() {
+		super();
 		this.sprite = 'images/char-boy.png';
 		this.xStartPosition = 404;
 		this.yStartPosition = 460;
@@ -60,14 +65,13 @@ class Player {
 		this.gemsCollected = 0;
 	}
 
-	render() {
-		ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-	}
-
 	getGem() {
 		this.gemsCollected += 1;
 		gemCountElement.innerHTML = (this.gemsCollected < 10) ? `0${this.gemsCollected}/${GEM_GOAL}` : `${this.gemsCollected}/${GEM_GOAL}`;
-		this.playCollectSound();
+
+		// Clone gem sound to be able to play the sound multiple times in rapid succession
+		let soundClone = gemSound.cloneNode();
+		soundClone.play();
 
 		// Add new enemy for every 10 gems collected
 		switch (this.gemsCollected) {
@@ -85,12 +89,6 @@ class Player {
 		}
 	}
 
-	playCollectSound() {
-		// Clone gem sound to be able to play the sound multiple times in rapid succession
-		let soundClone = gemSound.cloneNode();
-		soundClone.play();
-	}
-
 	hide() {
 		this.active = false;
 		this.x = -200;
@@ -101,7 +99,7 @@ class Player {
 		const self = this;
 		deathSound.play();
 		this.hearts -= 1;
-		this.updateHeartCounter(this.hearts);
+		updateHeartCounter(this.hearts);
 		this.hide();
 
 		if (this.hearts === 0) {
@@ -111,21 +109,6 @@ class Player {
 				self.reset();
 			}, 1000);
 		}
-	}
-
-	updateHeartCounter(hearts) {
-		switch (hearts) {
-			case 2:
-				heartCountElement.innerHTML = '<i class="fa fa-lg fa-heart"></i><i class="fa fa-lg fa-heart"></i><i class="fa fa-lg fa-heart-o"></i>';
-			break;
-			case 1:
-				heartCountElement.innerHTML = '<i class="fa fa-lg fa-heart"></i><i class="fa fa-lg fa-heart-o"></i><i class="fa fa-lg fa-heart-o"></i>';
-			break;
-			case 0:
-				heartCountElement.innerHTML = '<i class="fa fa-lg fa-heart-o"></i><i class="fa fa-lg fa-heart-o"></i><i class="fa fa-lg fa-heart-o"></i>';
-			break;
-		}
-
 	}
 
 	reset() {
@@ -156,8 +139,9 @@ class Player {
 }
 
 
-class Gem {
+class Gem extends gameObject {
 	constructor() {
+		super();
 		this.sprite = 'images/gem-orange.png';
 		this.x = 404;
 		this.y = 211;
@@ -171,15 +155,12 @@ class Gem {
 		this.x = xSpawnPositions[Math.floor(Math.random() * (7))];
 		this.y = ySpawnPositions[Math.floor(Math.random() * (5))];
 	}
-
-	render() {
-		ctx.drawImage(Resources.get(this.sprite), this.x + 17, this.y + 50, 66, 113);
-	}
 }
 
 
-class Splatter {
+class Splatter extends gameObject {
 	constructor() {
+		super();
 		this.sprite = 'images/blood1.png';
 	}
 
@@ -188,10 +169,6 @@ class Splatter {
 		this.sprite = sprites[(player.hearts - 1)];
 		this.x = player.x;
 		this.y = player.y + 90;
-	}
-
-	render() {
-		ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 140, 70);
 	}
 }
 
@@ -231,6 +208,20 @@ function endGame() {
 
 	const score = calculateScore(player.gemsCollected, player.hearts, totalSeconds, gameWon);
 	showScoreModal(score);
+}
+
+function updateHeartCounter(hearts) {
+	switch (hearts) {
+		case 2:
+			heartCountElement.innerHTML = '<i class="fa fa-lg fa-heart"></i><i class="fa fa-lg fa-heart"></i><i class="fa fa-lg fa-heart-o"></i>';
+		break;
+		case 1:
+			heartCountElement.innerHTML = '<i class="fa fa-lg fa-heart"></i><i class="fa fa-lg fa-heart-o"></i><i class="fa fa-lg fa-heart-o"></i>';
+		break;
+		case 0:
+			heartCountElement.innerHTML = '<i class="fa fa-lg fa-heart-o"></i><i class="fa fa-lg fa-heart-o"></i><i class="fa fa-lg fa-heart-o"></i>';
+		break;
+	}
 }
 
 function calculateScore(gems, hearts, seconds, gameWon) {
