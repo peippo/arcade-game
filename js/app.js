@@ -1,6 +1,6 @@
-const tileWidth = 101;
-const tileHeight = 83;
-const gemGoal = 50;
+const TILE_WIDTH = 101;
+const TILE_HEIGHT = 83;
+const GEM_GOAL = 50;
 const heartCountElement = document.querySelector('.game-stats__hearts');
 const gemCountElement = document.querySelector('.game-stats__gem-count');
 let gameStarted = false;
@@ -66,7 +66,7 @@ class Player {
 
 	getGem() {
 		this.gemsCollected += 1;
-		gemCountElement.innerHTML = (this.gemsCollected < 10) ? `0${this.gemsCollected}/${gemGoal}` : `${this.gemsCollected}/${gemGoal}`;
+		gemCountElement.innerHTML = (this.gemsCollected < 10) ? `0${this.gemsCollected}/${GEM_GOAL}` : `${this.gemsCollected}/${GEM_GOAL}`;
 		this.playCollectSound();
 
 		// Add new enemy for every 10 gems collected
@@ -77,7 +77,7 @@ class Player {
 			case 40:
 				allEnemies.push(new Enemy());
 			break;
-			case gemGoal:
+			case GEM_GOAL:
 				endGame();
 			break;
 			default:
@@ -139,16 +139,16 @@ class Player {
 				startGame();
 			break;
 			case 'left':
-				this.x -= (this.x > 0) ? tileWidth : 0;
+				this.x -= (this.x > 0) ? TILE_WIDTH : 0;
 			break;
 			case 'right':
-				this.x += (this.x < 808) ? tileWidth : 0;
+				this.x += (this.x < 808) ? TILE_WIDTH : 0;
 			break;
 			case 'up':
-				this.y -= (this.y > -32) ? tileHeight : 0;
+				this.y -= (this.y > -32) ? TILE_HEIGHT : 0;
 			break;
 			case 'down':
-				this.y += (this.y < 383) ? tileHeight : 0;
+				this.y += (this.y < 383) ? TILE_HEIGHT : 0;
 			break;
 		}
 	}
@@ -220,7 +220,7 @@ function endGame() {
 	let gameWon = false;
 	clearInterval(gameTimer);
 
-	if (player.gemsCollected >= gemGoal) {
+	if (player.gemsCollected >= GEM_GOAL) {
 		gameWinSound.play();
 		player.hide();
 		gameWon = true;
