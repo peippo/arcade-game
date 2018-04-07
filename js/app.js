@@ -98,6 +98,7 @@ class Player {
 	}
 
 	die() {
+		const self = this;
 		deathSound.play();
 		this.hearts -= 1;
 		this.updateHeartCounter(this.hearts);
@@ -107,7 +108,7 @@ class Player {
 			endGame();
 		} else {
 			setTimeout(function() {
-				player.reset();
+				self.reset();
 			}, 1000);
 		}
 	}
