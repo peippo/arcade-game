@@ -8,5 +8,6 @@ Classic Arcade Game Clone project for Udacity Front-End Web Developer Nanodegree
 * Game loop engine was provided by Udacity as a starting point for the project
 * Character & game board sprites are from [PlanetCute Game Prototyping Tiles](http://www.lostgarden.com/2007/05/dancs-miraculously-flexible-game.html) by Daniel Cook
 * Sounds are from [8-Bit Sound Effects Library](https://opengameart.org/content/8-bit-sound-effects-library) on [Open Game Art](https://opengameart.org/)
+* Blood splatters are from [pngtree](https://pngtree.com/freepng/crimson-blood_3448735.html)
 
 ### <a href="https://peippo.github.io/arcade-game/">Open the project</a>
