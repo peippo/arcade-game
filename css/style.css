@@ -12,6 +12,16 @@ body {
   height: 100%;
   line-height: 1.2; }
 
+.start-screen {
+  position: absolute;
+  top: 151px;
+  left: 1px;
+  opacity: 1;
+  transition: opacity, .5s; }
+
+.start-screen--disabled {
+  opacity: 0; }
+
 .info-modal {
   opacity: 0;
   display: flex;

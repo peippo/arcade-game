@@ -3,6 +3,7 @@ const tileHeight = 83;
 const gemGoal = 50;
 const heartCountElement = document.querySelector('.game-stats__hearts');
 const gemCountElement = document.querySelector('.game-stats__gem-count');
+let gameStarted = false;
 let gameTimer;
 
 // Sounds from opengameart.org
@@ -34,11 +35,11 @@ class Enemy {
 	}
 
 	randomizeSettings() {
+		const xStartPositions = [-101, -202, -303];
+		const yStartPositions = [45, 128, 211, 294, 377];
+		this.x = xStartPositions[Math.floor(Math.random() * (3))];
+		this.y = yStartPositions[Math.floor(Math.random() * (5))];
 		this.speedMultiplier = Math.random() * (4 - 1) + 1;
-		this.xStartPositions = [-101, -202, -303];
-		this.yStartPositions = [45, 128, 211, 294, 377];
-		this.x = this.xStartPositions[Math.floor(Math.random() * (3))];
-		this.y = this.yStartPositions[Math.floor(Math.random() * (5))];
 	}
 
 	render() {
@@ -54,7 +55,7 @@ class Player {
 		this.yStartPosition = 460;
 		this.x = this.xStartPosition;
 		this.y = this.yStartPosition;
-		this.active = true;
+		this.active = false;
 		this.hearts = 3;
 		this.gemsCollected = 0;
 	}
@@ -100,7 +101,7 @@ class Player {
 		deathSound.play();
 		this.hearts -= 1;
 		this.updateHeartCounter(this.hearts);
-		player.hide();
+		this.hide();
 
 		if (this.hearts === 0) {
 			endGame();
@@ -134,6 +135,9 @@ class Player {
 
 	handleInput(key) {
 		switch (key) {
+			case 'space':
+				startGame();
+			break;
 			case 'left':
 				this.x -= (this.x > 0) ? tileWidth : 0;
 			break;
@@ -204,14 +208,15 @@ for (let i = 0; i < 6; i++) {
 	allEnemies[i] = new Enemy();
 }
 
-// TODO
-//function startGame() {
-gameTimer = setInterval(setTime, 1000);
-//}
-
+function startGame() {
+	const startScreen = document.querySelector('.start-screen');
+	startScreen.classList.add('start-screen--disabled');
+	gameStarted = true;
+	player.active = true;
+	gameTimer = setInterval(setTime, 1000);
+}
 
 function endGame() {
-	let score = 0;
 	let gameWon = false;
 	clearInterval(gameTimer);
 
@@ -223,7 +228,7 @@ function endGame() {
 		gameOverSound.play();
 	}
 
-	score = calculateScore(player.gemsCollected, player.hearts, totalSeconds, gameWon);
+	const score = calculateScore(player.gemsCollected, player.hearts, totalSeconds, gameWon);
 	showScoreModal(score);
 }
 
@@ -234,7 +239,7 @@ function calculateScore(gems, hearts, seconds, gameWon) {
 
 	if (gameWon) {
 		heartsScore = hearts * 2500;
-		timeScore = 15000 - (seconds * 100);
+		timeScore = 14000 - (seconds * 100);
 		timeScore = (timeScore > 0) ? timeScore : 0;
 	}
 
@@ -264,9 +269,9 @@ function showScoreModal(score) {
 	} else if (score >= 12500 && score < 15000) {
 		message = 'You\'re getting really good at this!';
 	} else if (score >= 15000 && score < 17500) {
-		message = 'Wow! Not much room for improvement!';
-	} else if (score >= 17500 && score < 20500) {
 		message = 'Seriously impressive gem chasing!';
+	} else if (score >= 17500 && score < 20500) {
+		message = 'Wow! Not much room for improvement!';
 	} else if (score >= 20500 && score < 22500) {
 		message = 'You are a gem chasing god!!';
 	} else if (score >= 22500) {
@@ -280,7 +285,7 @@ function showScoreModal(score) {
 			<div class="info-modal__score">${score}</div>
 			<button class="info-modal__button">Play again</button>
 		</div>`
-	let infoModal = document.createElement('div');
+	const infoModal = document.createElement('div');
 	infoModal.classList.add('info-modal');
 	infoModal.innerHTML = infoModalMarkup;
 	document.body.prepend(infoModal);
@@ -289,7 +294,7 @@ function showScoreModal(score) {
 	}, 500);
 
 
-	let resetButton = document.querySelector('.info-modal__button');
+	const resetButton = document.querySelector('.info-modal__button');
 	resetButton.addEventListener('click', function() {
 		resetGame();
 	});
@@ -328,14 +333,18 @@ function pad(val) {
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
-	const allowedKeys = {
+	const controlKeys = {
 		37: 'left',
 		38: 'up',
 		39: 'right',
 		40: 'down'
 	};
 
+	const startKey = {32: 'space'};
+
 	if (player.active) {
-		player.handleInput(allowedKeys[e.keyCode]);
+		player.handleInput(controlKeys[e.keyCode]);
+	} else {
+		player.handleInput(startKey[e.keyCode]);
 	}
 });

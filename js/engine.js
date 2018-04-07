@@ -81,8 +81,10 @@ var Engine = (function(global) {
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
-        updateEntities(dt);
-        checkCollisions();
+        if (gameStarted) {
+            updateEntities(dt);
+            checkCollisions();
+        }
     }
 
     function checkCollisions() {
