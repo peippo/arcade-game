@@ -2,7 +2,7 @@ const tileWidth = 101;
 const tileHeight = 83;
 const gemGoal = 50;
 const heartCountElement = document.querySelector('.game-stats__hearts');
-const gemCountElement = document.querySelector('.js-gem-count');
+const gemCountElement = document.querySelector('.game-stats__gem-count');
 let gameTimer;
 
 // Sounds from opengameart.org
@@ -44,7 +44,7 @@ class Enemy {
 	render() {
 		ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 	}
-};
+}
 
 
 class Player {
@@ -159,12 +159,12 @@ class Gem {
 	}
 
 	randomizeSettings() {
-		this.sprites = ['images/gem-orange.png', 'images/gem-green.png', 'images/gem-blue.png']
-		this.sprite = this.sprites[Math.floor(Math.random() * (3))];
-		this.xSpawnPositions = [101, 202, 303, 404, 505, 606, 707];
-		this.ySpawnPositions = [45, 128, 211, 294, 377];
-		this.x = this.xSpawnPositions[Math.floor(Math.random() * (7))];
-		this.y = this.ySpawnPositions[Math.floor(Math.random() * (5))];
+		const sprites = ['images/gem-orange.png', 'images/gem-green.png', 'images/gem-blue.png']
+		const xSpawnPositions = [101, 202, 303, 404, 505, 606, 707];
+		const ySpawnPositions = [45, 128, 211, 294, 377];
+		this.sprite = sprites[Math.floor(Math.random() * (3))];
+		this.x = xSpawnPositions[Math.floor(Math.random() * (7))];
+		this.y = ySpawnPositions[Math.floor(Math.random() * (5))];
 	}
 
 	render() {
@@ -179,8 +179,8 @@ class Splatter {
 	}
 
 	drawBlood() {
-		this.sprites = ['images/blood1.png', 'images/blood2.png', 'images/blood3.png']
-		this.sprite = this.sprites[(player.hearts - 1)];
+		const sprites = ['images/blood1.png', 'images/blood2.png', 'images/blood3.png']
+		this.sprite = sprites[(player.hearts - 1)];
 		this.x = player.x;
 		this.y = player.y + 90;
 	}
@@ -245,26 +245,32 @@ function showScoreModal(score) {
 	let message = 'Hey, at least you tried...';
 	if (score >= 300 && score <= 500) {
 		message = 'Everybody has to start somewhere';
-	} else if (score >= 500 && score <= 1000) {
+	} else if (score >= 500 && score < 1000) {
 		message = 'Well that didn\'t go so well';
-	} else if (score >= 1000 && score <= 2000) {
+	} else if (score >= 1000 && score < 2000) {
 		message = 'Maybe a little more practice?';
-	} else if (score >= 2000 && score <= 3000) {
+	} else if (score >= 2000 && score < 3000) {
 		message = 'I\'m sure you\'ll get the hang of it';
-	} else if (score >= 3000 && score <= 4000) {
-		message = 'That wasn\'t too shabby!';
+	} else if (score >= 3000 && score < 4000) {
+		message = 'Ok, that wasn\'t too bad';
 	} else if (score >= 4000 && score < 5000) {
 		message = 'So close, give it another try!';
-	} else if (score >= 5000 && score <= 7500) {
+	} else if (score >= 5000 && score < 7500) {
 		message = 'You made it! Can you do it faster?';
-	} else if (score >= 7500 && score <= 10000) {
+	} else if (score >= 7500 && score < 10000) {
 		message = 'Nice! Now shave off some more seconds';
-	} else if (score >= 10000 && score <= 15000) {
+	} else if (score >= 10000 && score < 12500) {
+		message = 'Great work, I can see you\'ve been training';
+	} else if (score >= 12500 && score < 15000) {
 		message = 'You\'re getting really good at this!';
-	} else if (score >= 15000 && score <= 21500) {
+	} else if (score >= 15000 && score < 17500) {
 		message = 'Wow! Not much room for improvement!';
-	} else if (score >= 21500) {
+	} else if (score >= 17500 && score < 20500) {
+		message = 'Seriously impressive gem chasing!';
+	} else if (score >= 20500 && score < 22500) {
 		message = 'You are a gem chasing god!!';
+	} else if (score >= 22500) {
+		message = 'You are now ranked as the #1 player in the world!';
 	}
 
 	const infoModalMarkup = `
