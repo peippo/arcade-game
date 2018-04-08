@@ -174,16 +174,16 @@ var Engine = (function(global) {
          * the render function you have defined.
          */
         splatters.forEach(function(splatter) {
-            splatter.render(0, 0, 140, 70);
+            splatter.render(0, -30, 140, 70);
         });
 
-        gem.render(17, 50, 66, 113);
+        gem.render(17, -71, 66, 113);
 
         allEnemies.forEach(function(enemy) {
-            enemy.render();
+            enemy.render(0, -120);
         });
 
-        player.render();
+        player.render(0, -120);
     }
 
     /* This function does nothing but it could have been a good place to

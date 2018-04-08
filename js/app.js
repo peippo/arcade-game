@@ -3,26 +3,26 @@ const TILE_HEIGHT = 83;
 const GEM_GOAL = 50;
 const heartCountElement = document.querySelector('.game-stats__hearts');
 const gemCountElement = document.querySelector('.game-stats__gem-count');
-let gameStarted = false;
-let gameTimer;
-
-// Sounds from opengameart.org
+const minutesElement = document.querySelector('.game-stats__minutes');
+const secondsElement = document.querySelector('.game-stats__seconds');
 const gemSound = new Audio('sounds/Collect_Point_00.mp3');
 const deathSound = new Audio('sounds/Explosion_03.mp3');
 const gameOverSound = new Audio('sounds/Jingle_Lose_00.mp3');
 const gameWinSound = new Audio('sounds/Jingle_Win_00.mp3');
+let gameStarted = false;
+let totalSeconds = 0;
+let gameTimer;
+
 gemSound.preload = 'auto';
 deathSound.preload = 'auto';
 gameOverSound.preload = 'auto';
 gameWinSound.preload = 'auto';
-
 
 class gameObject {
 	render(xOffset = 0, yOffset = 0, spriteWidth = 101, spriteHeight = 171) {
 		ctx.drawImage(Resources.get(this.sprite), (this.x + xOffset), (this.y + yOffset), spriteWidth, spriteHeight);
 	}
 }
-
 
 class Enemy extends gameObject {
 	constructor() {
@@ -37,27 +37,26 @@ class Enemy extends gameObject {
 	update(dt) {
 		this.x += 100 * this.speedMultiplier * dt;
 
-		if (this.x > 909) {
+		if (this.x > TILE_WIDTH * 9) {
 			this.randomizeSettings();
 		}
 	}
 
 	randomizeSettings() {
-		const xStartPositions = [-101, -202, -303];
-		const yStartPositions = [45, 128, 211, 294, 377];
+		const xStartPositions = [-TILE_WIDTH, -TILE_WIDTH * 2, -TILE_WIDTH * 3];
+		const yStartPositions = [TILE_HEIGHT * 2, TILE_HEIGHT * 3, TILE_HEIGHT * 4, TILE_HEIGHT * 5, TILE_HEIGHT * 6];
 		this.x = xStartPositions[Math.floor(Math.random() * (3))];
 		this.y = yStartPositions[Math.floor(Math.random() * (5))];
 		this.speedMultiplier = Math.random() * (4 - 1) + 1;
 	}
 }
 
-
 class Player extends gameObject {
 	constructor() {
 		super();
 		this.sprite = 'images/char-boy.png';
-		this.xStartPosition = 404;
-		this.yStartPosition = 460;
+		this.xStartPosition = TILE_WIDTH * 4;
+		this.yStartPosition = TILE_HEIGHT * 7;
 		this.x = this.xStartPosition;
 		this.y = this.yStartPosition;
 		this.active = false;
@@ -84,15 +83,13 @@ class Player extends gameObject {
 			case GEM_GOAL:
 				endGame();
 			break;
-			default:
-			break;
 		}
 	}
 
 	hide() {
 		this.active = false;
-		this.x = -200;
-		this.y = -200;
+		this.x = -TILE_WIDTH * 5;
+		this.y = -TILE_HEIGHT * 5;
 	}
 
 	die() {
@@ -105,9 +102,7 @@ class Player extends gameObject {
 		if (this.hearts === 0) {
 			endGame();
 		} else {
-			setTimeout(function() {
-				self.reset();
-			}, 1000);
+			setTimeout(() => self.reset(), 1000);
 		}
 	}
 
@@ -126,37 +121,35 @@ class Player extends gameObject {
 				this.x -= (this.x > 0) ? TILE_WIDTH : 0;
 			break;
 			case 'right':
-				this.x += (this.x < 808) ? TILE_WIDTH : 0;
+				this.x += (this.x < (TILE_WIDTH * 8)) ? TILE_WIDTH : 0;
 			break;
 			case 'up':
-				this.y -= (this.y > -32) ? TILE_HEIGHT : 0;
+				this.y -= (this.y > TILE_HEIGHT) ? TILE_HEIGHT : 0;
 			break;
 			case 'down':
-				this.y += (this.y < 383) ? TILE_HEIGHT : 0;
+				this.y += (this.y < (TILE_HEIGHT * 7)) ? TILE_HEIGHT : 0;
 			break;
 		}
 	}
 }
 
-
 class Gem extends gameObject {
 	constructor() {
 		super();
 		this.sprite = 'images/gem-orange.png';
-		this.x = 404;
-		this.y = 211;
+		this.x = TILE_WIDTH * 4;
+		this.y = TILE_HEIGHT * 4;
 	}
 
 	randomizeSettings() {
 		const sprites = ['images/gem-orange.png', 'images/gem-green.png', 'images/gem-blue.png']
-		const xSpawnPositions = [101, 202, 303, 404, 505, 606, 707];
-		const ySpawnPositions = [45, 128, 211, 294, 377];
+		const xSpawnPositions = [TILE_WIDTH, TILE_WIDTH * 2, TILE_WIDTH * 3, TILE_WIDTH * 4, TILE_WIDTH * 5, TILE_WIDTH * 6, TILE_WIDTH * 7];
+		const ySpawnPositions = [TILE_HEIGHT * 2, TILE_HEIGHT * 3, TILE_HEIGHT * 4, TILE_HEIGHT * 5, TILE_HEIGHT * 6];
 		this.sprite = sprites[Math.floor(Math.random() * (3))];
 		this.x = xSpawnPositions[Math.floor(Math.random() * (7))];
 		this.y = ySpawnPositions[Math.floor(Math.random() * (5))];
 	}
 }
-
 
 class Splatter extends gameObject {
 	constructor() {
@@ -168,22 +161,8 @@ class Splatter extends gameObject {
 		const sprites = ['images/blood1.png', 'images/blood2.png', 'images/blood3.png']
 		this.sprite = sprites[(player.hearts - 1)];
 		this.x = player.x;
-		this.y = player.y + 90;
+		this.y = player.y;
 	}
-}
-
-
-let player = new Player();
-let gem = new Gem();
-
-let splatters = [];
-for (let i = 0; i < 3; i++) {
-	splatters[i] = new Splatter();
-}
-
-let allEnemies = [];
-for (let i = 0; i < 6; i++) {
-	allEnemies[i] = new Enemy();
 }
 
 function startGame() {
@@ -281,10 +260,7 @@ function showScoreModal(score) {
 	infoModal.classList.add('info-modal');
 	infoModal.innerHTML = infoModalMarkup;
 	document.body.prepend(infoModal);
-	setTimeout(function() {
-		infoModal.classList.add('info-modal--active');
-	}, 500);
-
+	setTimeout(() => infoModal.classList.add('info-modal--active'), 500);
 
 	const resetButton = document.querySelector('.info-modal__button');
 	resetButton.addEventListener('click', function() {
@@ -303,14 +279,10 @@ function resetGame() {
 }
 
 // Timer from stackoverflow, https://stackoverflow.com/questions/5517597/plain-count-up-timer-in-javascript
-const minutesLabel = document.getElementById('minutes');
-const secondsLabel = document.getElementById('seconds');
-let totalSeconds = 0;
-
 function setTime() {
 	++totalSeconds;
-	secondsLabel.innerHTML = pad(totalSeconds % 60);
-	minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
+	secondsElement.innerHTML = pad(totalSeconds % 60);
+	minutesElement.innerHTML = pad(parseInt(totalSeconds / 60));
 }
 
 function pad(val) {
@@ -322,8 +294,6 @@ function pad(val) {
 	}
 }
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
 	const controlKeys = {
 		37: 'left',
@@ -340,3 +310,16 @@ document.addEventListener('keyup', function(e) {
 		player.handleInput(startKey[e.keyCode]);
 	}
 });
+
+let player = new Player();
+let gem = new Gem();
+
+let splatters = [];
+for (let i = 0; i < 3; i++) {
+	splatters[i] = new Splatter();
+}
+
+let allEnemies = [];
+for (let i = 0; i < 6; i++) {
+	allEnemies[i] = new Enemy();
+}
